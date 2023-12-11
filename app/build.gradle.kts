@@ -74,4 +74,13 @@ dependencies {
     val nav_version = "2.7.5"
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // Preferences DataStore (SharedPreferences like APIs)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // optional - RxJava2 support
+    implementation("androidx.datastore:datastore-preferences-rxjava2:1.0.0")
+
+    // optional - RxJava3 support
+    implementation("androidx.datastore:datastore-preferences-rxjava3:1.0.0")
 }

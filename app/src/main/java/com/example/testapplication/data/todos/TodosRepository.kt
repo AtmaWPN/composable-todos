@@ -1,4 +1,5 @@
-import com.example.testapplication.data.Todo
+package com.example.testapplication.data.todos
+
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,6 +15,8 @@ interface TodosRepository {
      * Retrieve an item from the given data source that matches with the [id].
      */
     fun getTodoStream(id: Int): Flow<Todo?>
+
+    fun getTodoSetStream(ascending: Boolean): Flow<List<Todo>>
 
     /**
      * Insert item in the data source

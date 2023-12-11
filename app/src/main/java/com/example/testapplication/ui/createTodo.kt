@@ -8,24 +8,30 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.example.testapplication.data.Todo
-import kotlinx.coroutines.launch
+import com.example.testapplication.data.TodoList
+import com.example.testapplication.data.todos.Todo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTodo(viewModel: TodoViewModel, modifier: Modifier = Modifier) {
+fun CreateTodo(onSave: (Todo) -> Unit, setDefaultList: (TodoList) -> Unit, todoListID: Int, modifier: Modifier = Modifier) {
     val todoName = remember { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier) {
         TextField(value = todoName.value, onValueChange = { todoName.value = it })
         Button(onClick = {
-            val todo = Todo(taskText = todoName.value)
-            coroutineScope.launch {
-                viewModel.dataContainer.todosRepository.insertTodo(todo)
+            if (todoListID == -1) {
+                println("trying to add a new todolist to the db")
+                val newList = TodoList(name = "default list (in DB)")
+                setDefaultList(newList)
+                val todo = Todo(taskText = todoName.value, todoListID = 1, parentTodoID = null)
+                onSave(todo)
+                todoName.value = ""
+            } else {
+                println("adding todo to list id: $todoListID")
+                val todo = Todo(taskText = todoName.value, todoListID = todoListID, parentTodoID = null)
+                onSave(todo)
+                todoName.value = ""
             }
-            todoName.value = ""
         }) {
             Text(text = "Save")
         }
