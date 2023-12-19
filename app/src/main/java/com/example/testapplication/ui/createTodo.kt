@@ -19,6 +19,9 @@ fun CreateTodo(onSave: (Todo) -> Unit, setDefaultList: (TodoList) -> Unit, todoL
     Column(modifier = modifier) {
         TextField(value = todoName.value, onValueChange = { todoName.value = it })
         Button(onClick = {
+            if (todoName.value == "") {
+                return@Button
+            }
             if (todoListID == -1) {
                 println("trying to add a new todolist to the db")
                 val newList = TodoList(name = "default list (in DB)")
