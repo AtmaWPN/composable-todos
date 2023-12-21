@@ -31,11 +31,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     buildFeatures {
         compose = true
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
@@ -83,4 +83,7 @@ dependencies {
 
     // optional - RxJava3 support
     implementation("androidx.datastore:datastore-preferences-rxjava3:1.0.0")
+
+    // for bottom navigation
+    implementation("androidx.compose.material:material:1.5.4")
 }
