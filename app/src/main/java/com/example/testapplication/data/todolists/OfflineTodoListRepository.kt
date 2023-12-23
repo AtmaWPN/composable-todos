@@ -11,10 +11,10 @@ class OfflineTodoListRepository(private val itemDao: TodoListDao) {
 
     fun getTodoListsStream(ascending: Boolean): Flow<List<TodoList>> {
         var queryString = "SELECT * from TodoList ORDER BY completed "
-        if (ascending) {
-            queryString += "ASC"
+        queryString += if (ascending) {
+            "ASC"
         } else {
-            queryString += "DESC"
+            "DESC"
         }
         val query = SimpleSQLiteQuery(queryString, emptyArray())
         return itemDao.getTodoLists(query = query)

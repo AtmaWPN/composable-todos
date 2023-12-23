@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Delete
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
@@ -81,13 +79,12 @@ fun MainTodos(mainViewModel: TodoViewModel, modifier: Modifier = Modifier) {
             Popup(alignment = Alignment.Center,
                 onDismissRequest = { popupControl.value = false },
                 properties = PopupProperties(focusable = true)) {
-                Surface(color = Color.Yellow) {
-                    CreateTodo(onSave = { mainViewModel.dataContainer.todosRepository.insertTodo(it) },
-                        setDefaultList = {
-                            mainViewModel.dataContainer.todoListRepository.insertTodoList(it)
-                            setHomeList(newListId = 1, context)
-                        }, todoListID = homeListId, modifier = Modifier.padding(24.dp))
-                }
+                CreateTodo(onSave = { mainViewModel.dataContainer.todosRepository.insertTodo(it) },
+                    setDefaultList = {
+                        mainViewModel.dataContainer.todoListRepository.insertTodoList(it)
+                        setHomeList(newListId = 1, context)
+                    }, todoListID = homeListId, modifier = Modifier.padding(24.dp))
+
             }
         }
     }
@@ -124,19 +121,14 @@ fun TodoItem(todo: Todo, updateTodo: suspend (Todo) -> Unit,
         Checkbox(checked = todo.completed,
             onCheckedChange = { checkedState.value = it
                 todo.completed = it
-                coroutineScope.launch { updateTodo(todo) } },
-            colors = CheckboxDefaults.colors(
-                uncheckedColor = Color.Red,
-                checkedColor = Color.Green,
-                checkmarkColor = Color.Yellow
-            ))
+                coroutineScope.launch { updateTodo(todo) } })
         Text(
             text = todo.taskText,
             fontSize = 24.sp,
             modifier = Modifier.weight(1f),
         )
         IconButton(onClick = { coroutineScope.launch { deleteTodo(todo) } }) {
-            Icon(Icons.Sharp.Delete, "delete to-do button", tint = Color.Red)
+            Icon(Icons.Sharp.Delete, "delete to-do button", tint = MaterialTheme.colorScheme.error)
         }
     }
 }

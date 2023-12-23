@@ -13,7 +13,7 @@ import com.example.testapplication.ui.BottomNavBar
 import com.example.testapplication.ui.ListManager
 import com.example.testapplication.ui.MainTodos
 import com.example.testapplication.ui.TodoViewModel
-import com.example.testapplication.ui.theme.TestApplicationTheme
+import com.example.testapplication.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         val mainViewModel: TodoViewModel by viewModels()
 
         setContent {
-            TestApplicationTheme {
+            AppTheme/* TODO: (useDarkTheme = true) */ {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") { MainTodos(mainViewModel = mainViewModel) }
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    TestApplicationTheme {
+    AppTheme {
         NavHost(navController = rememberNavController(), startDestination = "home") {
 //            composable("home") { MainTodos() }
 //            composable("home/createTodo") { CreateTodo() }
