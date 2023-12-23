@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.testapplication.data.TodoList
+import com.example.testapplication.data.todolists.TodoList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 

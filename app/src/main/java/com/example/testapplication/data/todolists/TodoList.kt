@@ -1,4 +1,4 @@
-package com.example.testapplication.data
+package com.example.testapplication.data.todolists
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

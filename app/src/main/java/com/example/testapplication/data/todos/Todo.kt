@@ -3,7 +3,7 @@ package com.example.testapplication.data.todos
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.example.testapplication.data.TodoList
+import com.example.testapplication.data.todolists.TodoList
 
 @Entity(foreignKeys = [ForeignKey(entity = TodoList::class,
         parentColumns = ["id"],

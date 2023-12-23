@@ -1,25 +1,17 @@
 package com.example.testapplication.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Delete
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,33 +28,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.testapplication.data.TodoList
-import com.example.testapplication.data.dataStore
 import com.example.testapplication.data.getHomeTodoList
 import com.example.testapplication.data.setHomeList
+import com.example.testapplication.data.todolists.TodoList
 import com.example.testapplication.data.todos.Todo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainTodos(mainViewModel: TodoViewModel, modifier: Modifier = Modifier) {
-    // A surface container using the 'background' color from the theme
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val preferences = context.dataStore
 
     val homeListId: Int by getHomeTodoList(context).collectAsStateWithLifecycle(
         initialValue = -1,
         lifecycleOwner = LocalLifecycleOwner.current
     )
+    // TODO: should this be a LaunchedEffect?
     val homeTodoListFlow = mainViewModel.dataContainer.todoListRepository.getTodoListStream(homeListId)
 
     val homeTodoList: TodoList by homeTodoListFlow.collectAsStateWithLifecycle(
@@ -80,18 +67,11 @@ fun MainTodos(mainViewModel: TodoViewModel, modifier: Modifier = Modifier) {
         Column {
             ListDropdown(todoListFlow = mainViewModel.dataContainer.todoListRepository.getAllTodoListsStream(),
                 activeListName = nonNullHomeList.name,
-                onSelectList = { coroutineScope.launch {
-                    setHomeList(newListId = it.id, context)
-                } },
-                onSave = { coroutineScope.launch {
-                    mainViewModel.dataContainer.todoListRepository.insertTodoList(it)
-                } })
+                onSelectList = { setHomeList(newListId = it.id, context) },
+                onSave = { mainViewModel.dataContainer.todoListRepository.insertTodoList(it) })
             TodoList(todosFlow = mainViewModel.getTodos(homeListId),
-                updateTodo = { coroutineScope.launch {
-                mainViewModel.dataContainer.todosRepository.updateTodo(it)
-            } }, deleteTodo = { coroutineScope.launch {
-                mainViewModel.dataContainer.todosRepository.deleteTodo(it)
-            } })
+                updateTodo = { mainViewModel.dataContainer.todosRepository.updateTodo(it) },
+                deleteTodo = { mainViewModel.dataContainer.todosRepository.deleteTodo(it) })
 
             FloatingActionButton(onClick = { popupControl.value = true }) {
                 Text(text = "Create Todo", fontSize = 24.sp, modifier = Modifier.padding(12.dp))
@@ -102,76 +82,12 @@ fun MainTodos(mainViewModel: TodoViewModel, modifier: Modifier = Modifier) {
                 onDismissRequest = { popupControl.value = false },
                 properties = PopupProperties(focusable = true)) {
                 Surface(color = Color.Yellow) {
-                    CreateTodo(onSave = { coroutineScope.launch {
-                        mainViewModel.dataContainer.todosRepository.insertTodo(it)
-                    } }, setDefaultList = { coroutineScope.launch {
-                        mainViewModel.dataContainer.todoListRepository.insertTodoList(it)
-                        setHomeList(newListId = 1, context)
-                    } }, todoListID = homeListId, modifier = Modifier.padding(24.dp))
+                    CreateTodo(onSave = { mainViewModel.dataContainer.todosRepository.insertTodo(it) },
+                        setDefaultList = {
+                            mainViewModel.dataContainer.todoListRepository.insertTodoList(it)
+                            setHomeList(newListId = 1, context)
+                        }, todoListID = homeListId, modifier = Modifier.padding(24.dp))
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun ListDropdown(todoListFlow: Flow<List<TodoList>>, modifier: Modifier = Modifier, activeListName: String = "dropdown",
-                 onSelectList: (TodoList) -> Unit,
-                 onSave: (TodoList) -> Unit) {
-    val expanded = remember { mutableStateOf(false) }
-
-    val todoLists: List<TodoList> by todoListFlow.collectAsStateWithLifecycle(initialValue = emptyList(),
-        lifecycleOwner = LocalLifecycleOwner.current)
-
-    val popupControl = remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier
-        .wrapContentSize()) {
-        Button(onClick = { expanded.value = true },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-            contentPadding = PaddingValues(all = 5.dp)) {
-            Text(text = activeListName,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = modifier
-                    .padding(16.dp)
-                    .fillMaxWidth())
-        }
-        DropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false },
-            modifier = modifier
-                .fillMaxWidth()
-        ) {
-            for (todoList in todoLists) {
-                DropdownMenuItem(text = { Text(todoList.name,
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = modifier
-                        .padding(4.dp)
-                        .fillMaxWidth()) },
-                    onClick = { onSelectList(todoList)
-                        expanded.value = false })
-                Divider()
-            }
-            DropdownMenuItem(text = { Text(text = "new Todo List",
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center,
-                modifier = modifier
-                    .padding(4.dp)
-                    .fillMaxWidth()) },
-                onClick = {
-                    popupControl.value = true
-                    expanded.value = false })
-        }
-    }
-    if (popupControl.value) {
-        Popup(alignment = Alignment.Center,
-            onDismissRequest = { popupControl.value = false },
-            properties = PopupProperties(focusable = true)) {
-            Surface(color = Color.Yellow) {
-                CreateTodoList(onSave = onSave, modifier = Modifier.padding(24.dp))
             }
         }
     }
@@ -179,33 +95,36 @@ fun ListDropdown(todoListFlow: Flow<List<TodoList>>, modifier: Modifier = Modifi
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TodoList(todosFlow: Flow<List<Todo>>, updateTodo: (Todo) -> Unit,
-             deleteTodo: (Todo) -> Unit, modifier: Modifier = Modifier) {
+fun TodoList(todosFlow: Flow<List<Todo>>, updateTodo: suspend (Todo) -> Unit,
+             deleteTodo: suspend (Todo) -> Unit, modifier: Modifier = Modifier) {
 
     val todos: List<Todo> by todosFlow.collectAsStateWithLifecycle(initialValue = emptyList(),
         lifecycleOwner = LocalLifecycleOwner.current)
 
     LazyColumn {
         items(todos) { todo ->
-            TodoItem(todo = todo, onComplete = {
-                todo.completed = it
-                updateTodo(todo)
-            }, onDelete = { deleteTodo(todo) },
+            TodoItem(todo = todo, updateTodo = updateTodo,
+                deleteTodo = deleteTodo,
                 modifier.animateItemPlacement())
         }
     }
 }
 
 @Composable
-fun TodoItem(todo: Todo, onComplete: ((Boolean) -> Unit),
-             onDelete: () -> Unit,
+fun TodoItem(todo: Todo, updateTodo: suspend (Todo) -> Unit,
+             deleteTodo: suspend (Todo) -> Unit,
              modifier: Modifier = Modifier) {
+
+    val coroutineScope = rememberCoroutineScope()
+
     val checkedState = remember { mutableStateOf(todo.completed) }
+
     Row (verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth()) {
         Checkbox(checked = todo.completed,
             onCheckedChange = { checkedState.value = it
-                onComplete(it)},
+                todo.completed = it
+                coroutineScope.launch { updateTodo(todo) } },
             colors = CheckboxDefaults.colors(
                 uncheckedColor = Color.Red,
                 checkedColor = Color.Green,
@@ -216,7 +135,7 @@ fun TodoItem(todo: Todo, onComplete: ((Boolean) -> Unit),
             fontSize = 24.sp,
             modifier = Modifier.weight(1f),
         )
-        IconButton(onClick = onDelete) {
+        IconButton(onClick = { coroutineScope.launch { deleteTodo(todo) } }) {
             Icon(Icons.Sharp.Delete, "delete to-do button", tint = Color.Red)
         }
     }

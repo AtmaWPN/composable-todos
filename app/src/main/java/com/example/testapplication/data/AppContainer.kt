@@ -1,8 +1,8 @@
 package com.example.testapplication.data
 
 import android.content.Context
+import com.example.testapplication.data.todolists.OfflineTodoListRepository
 import com.example.testapplication.data.todos.OfflineTodosRepository
-import com.example.testapplication.data.todos.TodosRepository
 
 /**
  * App container for Dependency injection.

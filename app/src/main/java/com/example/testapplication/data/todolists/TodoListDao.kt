@@ -1,4 +1,4 @@
-package com.example.testapplication.data
+package com.example.testapplication.data.todolists
 
 import androidx.room.Dao
 import androidx.room.Delete

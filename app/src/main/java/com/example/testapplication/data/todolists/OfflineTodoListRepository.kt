@@ -1,4 +1,4 @@
-package com.example.testapplication.data
+package com.example.testapplication.data.todolists
 
 import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.flow.Flow
