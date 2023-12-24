@@ -18,6 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -95,6 +97,10 @@ fun MainTodos(mainViewModel: TodoViewModel, modifier: Modifier = Modifier) {
 fun TodoList(todosFlow: Flow<List<Todo>>, updateTodo: suspend (Todo) -> Unit,
              deleteTodo: suspend (Todo) -> Unit, modifier: Modifier = Modifier) {
 
+    val recomposeToggle = remember { mutableStateOf(false) }
+
+    LaunchedEffect(recomposeToggle.value) {}
+
     val todos: List<Todo> by todosFlow.collectAsStateWithLifecycle(initialValue = emptyList(),
         lifecycleOwner = LocalLifecycleOwner.current)
 
@@ -102,6 +108,7 @@ fun TodoList(todosFlow: Flow<List<Todo>>, updateTodo: suspend (Todo) -> Unit,
         items(todos) { todo ->
             TodoItem(todo = todo, updateTodo = updateTodo,
                 deleteTodo = deleteTodo,
+                recomposeToggle,
                 modifier.animateItemPlacement())
         }
     }
@@ -110,6 +117,7 @@ fun TodoList(todosFlow: Flow<List<Todo>>, updateTodo: suspend (Todo) -> Unit,
 @Composable
 fun TodoItem(todo: Todo, updateTodo: suspend (Todo) -> Unit,
              deleteTodo: suspend (Todo) -> Unit,
+             recomposeToggle: MutableState<Boolean>,
              modifier: Modifier = Modifier) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -121,6 +129,7 @@ fun TodoItem(todo: Todo, updateTodo: suspend (Todo) -> Unit,
         Checkbox(checked = todo.completed,
             onCheckedChange = { checkedState.value = it
                 todo.completed = it
+                recomposeToggle.value = !recomposeToggle.value
                 coroutineScope.launch { updateTodo(todo) } })
         Text(
             text = todo.taskText,

@@ -13,10 +13,10 @@ class OfflineTodosRepository(private val itemDao: TodoDao) {
         var queryString = "SELECT * from Todo WHERE todoListID = "
         queryString += listID
         queryString += " ORDER BY completed "
-        if (ascending) {
-            queryString += "ASC"
+        queryString += if (ascending) {
+            "ASC"
         } else {
-            queryString += "DESC"
+            "DESC"
         }
         val query = SimpleSQLiteQuery(queryString, emptyArray())
         return itemDao.getTodoSet(query = query)
