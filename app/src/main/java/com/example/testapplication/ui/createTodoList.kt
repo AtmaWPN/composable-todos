@@ -13,7 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.testapplication.R
 import com.example.testapplication.data.todolists.TodoList
 import kotlinx.coroutines.launch
 
@@ -24,7 +26,7 @@ fun CreateTodoList(onSave: suspend (TodoList) -> Unit, modifier: Modifier = Modi
     val listName = remember { mutableStateOf("") }
     Surface(border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)) {
         Column(modifier = modifier) {
-            TextField(label = { Text(text = "List Name") }, value = listName.value, onValueChange = { listName.value = it })
+            TextField(label = { Text(text = stringResource(R.string.list_input_label)) }, value = listName.value, onValueChange = { listName.value = it })
             Button(onClick = {
                 if (listName.value == "") {
                     return@Button
@@ -33,7 +35,7 @@ fun CreateTodoList(onSave: suspend (TodoList) -> Unit, modifier: Modifier = Modi
                 coroutineScope.launch { onSave(newList) }
                 listName.value = ""
             }) {
-                Text(text = "Save")
+                Text(text = stringResource(R.string.save_button_label))
             }
         }
     }

@@ -13,7 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import com.example.testapplication.R
 import com.example.testapplication.data.todolists.TodoList
 import com.example.testapplication.data.todos.Todo
 import kotlinx.coroutines.launch
@@ -31,14 +33,15 @@ fun CreateTodo(onSave: suspend (Todo) -> Unit,
         Column(modifier = modifier) {
             TextField(
                 value = todoName.value,
-                label = { Text(text = "Task Text") },
+                label = { Text(text = stringResource(R.string.task_input_label)) },
                 onValueChange = { todoName.value = it })
+            val newListName = stringResource(R.string.default_list_name)
             Button(onClick = {
                 if (todoName.value == "") {
                     return@Button
                 }
                 val todo = if (todoListID == -1) {
-                    val newList = TodoList(name = "default list (in DB)")
+                    val newList = TodoList(name = newListName)
                     coroutineScope.launch { setDefaultList(newList) }
                     Todo(taskText = todoName.value, todoListID = 1, parentTodoID = null)
                 } else {
@@ -47,7 +50,7 @@ fun CreateTodo(onSave: suspend (Todo) -> Unit,
                 coroutineScope.launch { onSave(todo) }
                 todoName.value = ""
             }) {
-                Text(text = "Save")
+                Text(text = stringResource(R.string.save_button_label))
             }
         }
     }

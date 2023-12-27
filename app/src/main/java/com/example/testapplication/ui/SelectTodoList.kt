@@ -18,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -26,12 +27,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.testapplication.R
 import com.example.testapplication.data.todolists.TodoList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
-fun ListDropdown(todoListFlow: Flow<List<TodoList>>, modifier: Modifier = Modifier, activeListName: String = "dropdown",
+fun ListDropdown(todoListFlow: Flow<List<TodoList>>, modifier: Modifier = Modifier, activeListName: String,
                  onSelectList: suspend (TodoList) -> Unit,
                  onSave: suspend (TodoList) -> Unit) {
 
@@ -73,7 +75,7 @@ fun ListDropdown(todoListFlow: Flow<List<TodoList>>, modifier: Modifier = Modifi
                         expanded.value = false })
                 Divider(thickness = Dp.Hairline, modifier = Modifier.padding(horizontal = 20.dp))
             }
-            DropdownMenuItem(text = { Text(text = "new Todo List",
+            DropdownMenuItem(text = { Text(text = stringResource(R.string.new_list_button_label),
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
                 modifier = modifier

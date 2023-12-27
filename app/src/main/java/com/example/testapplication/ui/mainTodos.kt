@@ -28,12 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.testapplication.R
 import com.example.testapplication.data.getHomeTodoList
 import com.example.testapplication.data.setHomeList
 import com.example.testapplication.data.todolists.TodoList
@@ -53,11 +55,11 @@ fun MainTodos(mainViewModel: TodoViewModel, modifier: Modifier = Modifier) {
     val homeTodoListFlow = mainViewModel.dataContainer.todoListRepository.getTodoListStream(homeListId)
 
     val homeTodoList: TodoList by homeTodoListFlow.collectAsStateWithLifecycle(
-        initialValue = TodoList(id=-1, name = "default list"),
+        initialValue = TodoList(id=-1, name = stringResource(R.string.default_list_name)),
         lifecycleOwner = LocalLifecycleOwner.current
     )
 
-    val nonNullHomeList = homeTodoList ?: TodoList(name = "default list")
+    val nonNullHomeList = homeTodoList ?: TodoList(name = stringResource(R.string.default_list_name))
 
     Surface(modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background) {
@@ -74,7 +76,7 @@ fun MainTodos(mainViewModel: TodoViewModel, modifier: Modifier = Modifier) {
                 deleteTodo = { mainViewModel.dataContainer.todosRepository.deleteTodo(it) })
 
             FloatingActionButton(onClick = { popupControl.value = true }) {
-                Text(text = "Create Todo", fontSize = 24.sp, modifier = Modifier.padding(12.dp))
+                Text(text = stringResource(R.string.new_todo_button_label), fontSize = 24.sp, modifier = Modifier.padding(12.dp))
             }
         }
         if (popupControl.value) {
@@ -137,7 +139,7 @@ fun TodoItem(todo: Todo, updateTodo: suspend (Todo) -> Unit,
             modifier = Modifier.weight(1f),
         )
         IconButton(onClick = { coroutineScope.launch { deleteTodo(todo) } }) {
-            Icon(Icons.Sharp.Delete, "delete to-do button", tint = MaterialTheme.colorScheme.error)
+            Icon(Icons.Sharp.Delete, stringResource(R.string.delete_button_description), tint = MaterialTheme.colorScheme.error)
         }
     }
 }

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Composable Todos</string>
+    <string name="default_list_name">To-Do List</string>
+    <string name="new_todo_button_label">New Task</string>
+    <string name="home_todos_label">Home</string>
+    <string name="list_manager_label">List Manager</string>
+    <string name="delete_button_description">deletes associated item</string>
+    <string name="new_list_button_label">New To-Do List</string>
+    <string name="save_button_label">Save</string>
+    <string name="list_input_label">List Name</string>
+    <string name="task_input_label">Task Text</string>
 </resources>

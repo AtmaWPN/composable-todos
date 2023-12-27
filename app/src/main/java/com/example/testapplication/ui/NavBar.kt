@@ -5,13 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -26,17 +25,17 @@ fun BottomNavBar(navController: NavHostController) {
             val navBackStackEntry = navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry.value?.destination
 
-            val routes = listOf(
-                "home",
-                "list_manager"
+            val screens = listOf(
+                Screen.Home,
+                Screen.ListManager
             )
-            routes.forEach { route ->
+            screens.forEach { screen ->
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Filled.List, contentDescription = null) },
-                    label = { Text(text = route) },
-                    selected = currentDestination?.hierarchy?.any { it.route == route } == true,
+                    icon = { Icon(screen.icon, contentDescription = null) },
+                    label = { Text(text = stringResource(screen.resourceId)) },
+                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                     onClick = {
-                        navController.navigate(route) {
+                        navController.navigate(screen.route) {
                             // Pop up to the start destination of the graph
                             // So that the back button always takes you home
                             popUpTo(navController.graph.findStartDestination().id) {

@@ -22,11 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.testapplication.R
 import com.example.testapplication.data.todolists.TodoList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -39,7 +41,7 @@ fun ListManager(viewModel: TodoViewModel, modifier: Modifier = Modifier) {
     Surface(modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background) {
         Column {
-            Text(text = "Your TodoLists",
+            Text(text = stringResource(R.string.list_manager_label),
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -81,7 +83,7 @@ fun TodoListItem(todoList: TodoList, onDelete: () -> Unit, modifier: Modifier = 
                 .padding(horizontal = 8.dp)
         )
         IconButton(onClick = onDelete) {
-            Icon(Icons.Sharp.Delete, "delete todo list button", tint = Color.Red)
+            Icon(Icons.Sharp.Delete, stringResource(R.string.delete_button_description), tint = Color.Red)
         }
     }
 }
