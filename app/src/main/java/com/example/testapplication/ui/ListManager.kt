@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,13 +30,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.testapplication.R
+import com.example.testapplication.data.getHomeTodoList
+import com.example.testapplication.data.setHomeList
 import com.example.testapplication.data.todolists.TodoList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @Composable
 fun ListManager(viewModel: TodoViewModel, modifier: Modifier = Modifier) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val todoListsFlow = viewModel.dataContainer.todoListRepository.getAllTodoListsStream()
     Surface(modifier = modifier.fillMaxSize(),
@@ -50,6 +55,12 @@ fun ListManager(viewModel: TodoViewModel, modifier: Modifier = Modifier) {
                     .fillMaxWidth())
             TodoListColumn(todoListsFlow = todoListsFlow, deleteTodoList = { coroutineScope.launch {
                 viewModel.dataContainer.todoListRepository.deleteTodoList(it)
+                val currentHomeListId = getHomeTodoList(context).first()
+                if (it.id == currentHomeListId) {
+                    val currentTodoLists = viewModel.dataContainer.todoListRepository.getAllTodoListsStream().first()
+                    val firstListId = currentTodoLists[0].id
+                    setHomeList(firstListId, context)
+                }
             } })
         }
     }

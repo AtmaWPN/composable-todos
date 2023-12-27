@@ -31,7 +31,7 @@ fun CreateTodoList(onSave: suspend (TodoList) -> Unit, modifier: Modifier = Modi
                 if (listName.value == "") {
                     return@Button
                 }
-                val newList = TodoList(name = listName.value)
+                val newList = TodoList(name = listName.value.trim())
                 coroutineScope.launch { onSave(newList) }
                 listName.value = ""
             }) {

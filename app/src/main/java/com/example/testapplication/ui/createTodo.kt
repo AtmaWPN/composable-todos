@@ -43,7 +43,7 @@ fun CreateTodo(onSave: suspend (Todo) -> Unit,
                 val todo = if (todoListID == -1) {
                     val newList = TodoList(name = newListName)
                     coroutineScope.launch { setDefaultList(newList) }
-                    Todo(taskText = todoName.value, todoListID = 1, parentTodoID = null)
+                    Todo(taskText = todoName.value.trim(), todoListID = 1, parentTodoID = null)
                 } else {
                     Todo(taskText = todoName.value, todoListID = todoListID, parentTodoID = null)
                 }
